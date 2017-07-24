@@ -4,18 +4,8 @@ Tmup4J is a EstSoft Team-up API binding library for the Java language licensed u
 
 Tmup4J includes software from gson.google.com to parse JSON request/response from the Team-up API. You can see the license term at https://github.com/google/gson/blob/master/LICENSE
 
-======= Example =====
 
-package test.pe.kr.realizm.tmup4j;
 
-import java.io.File;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
-import pe.kr.realizm.tmup4j.Tmup4J;
-
-public class TestTmup4J {
 
 	public static void main(String[] args) throws Exception {
 		
@@ -54,5 +44,3 @@ public class TestTmup4J {
 		
 		
 	}
-
-}
