@@ -13,15 +13,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
-class RestHelper {
-
-	private static String AUTHORIZATION = null;
-
-	protected void setAuthorization(String Authorization) {
-		RestHelper.AUTHORIZATION = Authorization;
+class Request {
+	
+	private String ACCESS_TOKEN = null;
+	private String REFRESH_TOKEN = null;
+	
+	void clearToken() {
+		this.ACCESS_TOKEN = null;
+		this.REFRESH_TOKEN = null;
 	}
-
-	public JsonObject request(RequestMethod requestMethod, ContentType contentType, final String apiPath, String params)
+	
+	void setToken(String tokenType, String accessToken, String refreshToken) {
+		this.ACCESS_TOKEN = tokenType + " " + accessToken;
+		this.REFRESH_TOKEN = tokenType + " " + refreshToken;
+	}
+	
+	JsonObject request(RequestMethod requestMethod, ContentType contentType, final String apiPath, String params)
 			throws IOException {
 
 		String requestUrl = apiPath;
@@ -46,9 +53,8 @@ class RestHelper {
 			conn.setRequestProperty("Content-Type", contentType.getType());
 			conn.setRequestProperty("charset", "utf-8");
 
-			if (AUTHORIZATION != null) {
-				System.out.println("AUTHORIZATION :" + AUTHORIZATION);
-				conn.setRequestProperty("Authorization", AUTHORIZATION);
+			if (ACCESS_TOKEN != null) {
+				conn.setRequestProperty("Authorization", ACCESS_TOKEN);
 			}
 
 			if (params != null && params.length() > 0 && requestMethod == RequestMethod.POST) {
@@ -62,6 +68,7 @@ class RestHelper {
 			final int responseCode = conn.getResponseCode();
 			System.out.println(String.format("Sending '%s' request to URL : %s", requestMethod, requestUrl));
 			System.out.println("Response Code : " + responseCode);
+			System.out.println("===================================================================");
 
 			if (responseCode < 400) {
 				isr = new InputStreamReader(conn.getInputStream());
@@ -104,7 +111,7 @@ class RestHelper {
 
 	}
 
-	public JsonObject uploadFiles(final String apiPath, File[] files) throws IOException {
+	JsonObject uploadFiles(final String apiPath, File[] files) throws IOException {
 
 		final String boundary = "---------------------------tmup4J" + System.currentTimeMillis();
 		HttpsURLConnection conn = null;
@@ -129,7 +136,7 @@ class RestHelper {
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("Connection", "Keep-Alive");
 			conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-			conn.setRequestProperty("Authorization", AUTHORIZATION);
+			conn.setRequestProperty("Authorization", ACCESS_TOKEN);
 			conn.setRequestProperty("Cache-Control", "no-cache");
 
 			dos = new DataOutputStream(conn.getOutputStream());
@@ -158,6 +165,7 @@ class RestHelper {
 
 			final int responseCode = conn.getResponseCode();
 			System.out.println("file upload Response Code : " + responseCode);
+			System.out.println("============================================");
 			if (responseCode == 200) {
 				isr = new InputStreamReader(conn.getInputStream());
 			} else {
@@ -206,5 +214,7 @@ class RestHelper {
 			conn.disconnect();
 		}
 	}
+
+	
 
 }

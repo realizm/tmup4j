@@ -28,9 +28,9 @@ Tmup4J includes software from gson.google.com to parse JSON request/response fro
 		long feedGroupNumber = tmup4J.getFeedGroupNumber(teamIdx, "테스트피드");
 		
 		//feed발송
-		String feedContent = "피드 컨텐츠";
+		String feedContent = "<h1>피드 컨텐츠</h1>";
 		File[] attachFiles = {new File("AnyOne"), new File("AnotherOne")};
-		tmup4J.postFeed(feedGroupNumber, feedContent, teamIdx, attachFiles, false);
+		tmup4J.postFeed(feedGroupNumber, feedContent, true, teamIdx, attachFiles, false);
 		
 		
 		//chat

@@ -9,6 +9,10 @@ import com.google.gson.JsonObject;
 
 class Feed extends Tmup4J {
 
+	Feed(Request request) {
+		super(request);
+	}
+
 	@Override
 	public JsonObject getFeedGroupList(int team_number) throws IOException {
 
@@ -17,7 +21,7 @@ class Feed extends Tmup4J {
 			param = "team=" + team_number;
 		}
 
-		return rest.request(RequestMethod.GET, ContentType.application_xwwwformurlencoded,
+		return request.request(RequestMethod.GET, ContentType.application_xwwwformurlencoded,
 				EDGE_DOMAIN + "/v3/feedgroups", param);
 	}
 
@@ -46,7 +50,8 @@ class Feed extends Tmup4J {
 	}
 
 	@Override
-	public long postFeed(long feedgroup_number, String content, int team_number, File[] files, boolean force_alert) throws IOException {
+	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number, File[] files,
+			boolean force_alert) throws IOException {
 
 		JsonObject param = new JsonObject();
 		param.addProperty("content", content);
@@ -54,7 +59,7 @@ class Feed extends Tmup4J {
 
 		if (files != null && files.length > 0) {
 
-			JsonObject uploadResult = rest.uploadFiles(FILE_DOMAIN + "/v3/files/" + team_number, files);
+			JsonObject uploadResult = request.uploadFiles(FILE_DOMAIN + "/v3/files/" + team_number, files);
 			JsonArray uploadResultArray = uploadResult.get("files").getAsJsonArray();
 
 			JsonArray ids = new JsonArray();
@@ -66,14 +71,14 @@ class Feed extends Tmup4J {
 			param.add("ids", ids);
 		}
 
-		return postFeed(feedgroup_number, param);
+		return postFeed(feedgroup_number, isMarkupContent, param);
 	}
 	
 	@Override
-	public long postFeed(long feedgroup_number, JsonObject param) throws IOException {
-		return rest.request(RequestMethod.POST,
+	public long postFeed(long feedgroup_number, boolean isMarkupContent, JsonObject param) throws IOException {
+		return request.request(RequestMethod.POST,
 				ContentType.appliaction_json,
-				EDGE_DOMAIN + "/v3/feed/" + feedgroup_number,
+				EDGE_DOMAIN + "/v3/feed/" + feedgroup_number + "/" + (isMarkupContent ? "2" : "1"),
 				param.toString()).get("feed").getAsLong();
 	}
 }

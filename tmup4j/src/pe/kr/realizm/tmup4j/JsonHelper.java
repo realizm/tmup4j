@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 
 class JsonHelper {
 
-	public static JsonObject toJson(String jsonString) {
+	static JsonObject toJson(String jsonString) {
 
 		JsonParser jp = new JsonParser();
 		return (JsonObject) jp.parse(jsonString);

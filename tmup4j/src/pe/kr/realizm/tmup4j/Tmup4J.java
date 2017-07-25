@@ -6,20 +6,17 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 
 public class Tmup4J {
-	protected static String AUTH_DOMAIN = "https://auth.tmup.com";
-	protected static String EDGE_DOMAIN = "https://edge.tmup.com";
-	protected static String FILE_DOMAIN = "https://file.tmup.com";
 
-	protected static String CLIENT_ID = null;
-	protected static String CLIENT_SECRET = null;
+	String AUTH_DOMAIN = "https://auth.tmup.com";
+	String EDGE_DOMAIN = "https://edge.tmup.com";
+	String FILE_DOMAIN = "https://file.tmup.com";
 
-	protected static String TOKEN_TYPE = null;
-	protected static String ACCESS_TOKEN = null;
-	protected static String REFRESH_TOKEN = null;
+	private OAuth2 oAuth2;
 
-	protected RestHelper rest = new RestHelper();
+	Request request;
 
-	protected Tmup4J() {
+	Tmup4J(Request request) {
+		this.request = request;
 	}
 
 	/**
@@ -31,8 +28,8 @@ public class Tmup4J {
 	 * @param client_secret
 	 */
 	public Tmup4J(String client_id, String client_secret) {
-		Tmup4J.CLIENT_ID = client_id;
-		Tmup4J.CLIENT_SECRET = client_secret;
+		this.request = new Request();
+		this.oAuth2 = new OAuth2(request, AUTH_DOMAIN, client_id, client_secret);
 	}
 
 	/**
@@ -44,42 +41,40 @@ public class Tmup4J {
 	 * @param password
 	 * @return
 	 * @throws IllegalAccessException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public JsonObject oAuth2(String username, String password) throws IllegalAccessException, IOException {
-		return new OAuth2().oAuth2(username, password);
+		return oAuth2.oAuth2(username, password);
 	}
 
 	/**
-	 * <h1>oauth2 - Authorization Code #2 (NOT TESTED)</h1>
-	 * 발급 받은 code 로 token 발급
+	 * <h1>oauth2 - Authorization Code #2 (NOT TESTED)</h1> 발급 받은 code 로 token 발급
 	 * 
 	 * @see also http://team-up.github.io/oauth2/#api-oauth2-postOauth2TokenCode2
 	 * 
 	 * @param code
 	 * @return
 	 * @throws IllegalAccessException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public JsonObject oAuth2(String code) throws IllegalAccessException, IOException {
-		return new OAuth2().oAuth2(code);
+		return oAuth2.oAuth2(code);
 	}
-	
+
 	/**
 	 * <h1>my - 내 정보</h1>
 	 * 
 	 * @see also http://team-up.github.io/v1/auth/#api-my-getUser
 	 * 
-	 * @return My Info 
+	 * @return My Info
 	 * @throws IOException
 	 */
 	public JsonObject getMyInfo() throws IOException {
-		return new My().getMyInfo();
+		return new My(request).getMyInfo();
 	}
-	
+
 	/**
-	 * <h1>team - 조직도 검색</h1>
-	 * 이름(초성가능), 부서, 이메일 검색
+	 * <h1>team - 조직도 검색</h1> 이름(초성가능), 부서, 이메일 검색
 	 * 
 	 * @see also http://team-up.github.io/v1/auth/#api-team-getSearch
 	 * 
@@ -89,7 +84,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject searchOrganization(int team_number, String query) throws IOException {
-		return new Team().searchOrganization(team_number, query);
+		return new Team(request).searchOrganization(team_number, query);
 	}
 
 	/**
@@ -101,7 +96,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getFeedGroupList() throws IOException {
-		return new Feed().getFeedGroupList(-1);
+		return new Feed(request).getFeedGroupList(-1);
 	}
 
 	/**
@@ -111,10 +106,10 @@ public class Tmup4J {
 	 * 
 	 * @param team_number
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public JsonObject getFeedGroupList(int team_number) throws IOException {
-		return new Feed().getFeedGroupList(team_number);
+		return new Feed(request).getFeedGroupList(team_number);
 	}
 
 	/**
@@ -126,7 +121,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long getFeedGroupNumber(int team_number, String feed_name) throws IOException {
-		return new Feed().getFeedGroupNumber(team_number, feed_name);
+		return new Feed(request).getFeedGroupNumber(team_number, feed_name);
 	}
 
 	/**
@@ -136,10 +131,11 @@ public class Tmup4J {
 	 * @param content
 	 * @return feed_number
 	 * @param force_alert
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, String content, boolean force_alert) throws IOException {
-		return new Feed().postFeed(feedgroup_number, content, -1, new File[0], force_alert);
+	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, boolean force_alert)
+			throws IOException {
+		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, -1, new File[0], force_alert);
 	}
 
 	/**
@@ -153,9 +149,11 @@ public class Tmup4J {
 	 * @return feed_number
 	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, String content, int team_number, File attach_file, boolean force_alert) throws IOException {
+	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number,
+			File attach_file, boolean force_alert) throws IOException {
 		File[] attach_files = { attach_file };
-		return new Feed().postFeed(feedgroup_number, content, team_number, attach_files, force_alert);
+		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, team_number, attach_files,
+				force_alert);
 	}
 
 	/**
@@ -169,10 +167,12 @@ public class Tmup4J {
 	 * @return feed_number
 	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, String content, int team_number, File[] attach_files, boolean force_alert) throws IOException {
-		return new Feed().postFeed(feedgroup_number, content, team_number, attach_files, force_alert);
+	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number,
+			File[] attach_files, boolean force_alert) throws IOException {
+		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, team_number, attach_files,
+				force_alert);
 	}
-	
+
 	/**
 	 * <h1>feed - 피드 생성</h1>
 	 * 
@@ -183,10 +183,10 @@ public class Tmup4J {
 	 * @return
 	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, JsonObject param) throws IOException {
-		return new Feed().postFeed(feedgroup_number, param);
+	public long postFeed(long feedgroup_number, boolean isMarkupContent, JsonObject param) throws IOException {
+		return new Feed(request).postFeed(feedgroup_number, isMarkupContent, param);
 	}
-	
+
 	/**
 	 * <h1>room - 대화방 목록</h1>
 	 * 
@@ -196,9 +196,9 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getRoomList() throws IOException {
-		return new Room().getRoomList(-1);
+		return new Room(request).getRoomList(-1);
 	}
-	
+
 	/**
 	 * <h1>room - 대화방 목록</h1>
 	 * 
@@ -209,11 +209,11 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getRoomList(int team_number) throws IOException {
-		return new Room().getRoomList(team_number);
+		return new Room(request).getRoomList(team_number);
 	}
-	
+
 	/**
-	 * <h1> room - 대화방생성</h1>
+	 * <h1>room - 대화방생성</h1>
 	 * 
 	 * @see also http://team-up.github.io/v3/edge/chat/#api-room-postRoom
 	 * 
@@ -223,9 +223,9 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long createRoom(int team_number, int[] user_numbers) throws IOException {
-		return new Room().createRoom(team_number, user_numbers);
+		return new Room(request).createRoom(team_number, user_numbers);
 	}
-	
+
 	/**
 	 * <h1>message - 메시지 생성</h1>
 	 * 
@@ -236,9 +236,9 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long sendMessage(int team_number, int user_number, String content) throws IOException {
-		return new Message().sendMessage(team_number, user_number, content);
+		return new Message(request).sendMessage(team_number, user_number, content);
 	}
-	
+
 	/**
 	 * <h1>message - 메시지 생성</h1>
 	 * 
@@ -250,19 +250,20 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long sendMessage(long room_number, JsonObject param) throws IOException {
-		return new Message().sendMessage(room_number, param);
+		return new Message(request).sendMessage(room_number, param);
 	}
-		
+
 	public void setAuthDomain(String auth_domain) {
-		Tmup4J.AUTH_DOMAIN = auth_domain;
+		this.AUTH_DOMAIN = auth_domain;
+		oAuth2.setAuthDomain(auth_domain);
 	}
-	
+
 	public void setEdgeDomain(String edge_domain) {
-		Tmup4J.EDGE_DOMAIN = edge_domain;
+		this.EDGE_DOMAIN = edge_domain;
 	}
-	
+
 	public void setFileDomain(String file_domain) {
-		Tmup4J.FILE_DOMAIN = file_domain;
+		this.FILE_DOMAIN = file_domain;
 	}
 
 }

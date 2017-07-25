@@ -8,10 +8,14 @@ import com.google.gson.JsonObject;
 
 class Room extends Tmup4J {
 	
+	Room(Request request) {
+		super(request);
+	}
+
 	@Override
 	public JsonObject getRoomList(int team_number) throws IOException {
 		
-		return rest.request(RequestMethod.GET,
+		return request.request(RequestMethod.GET,
 				ContentType.application_xwwwformurlencoded,
 				EDGE_DOMAIN + "/v3/rooms" + (team_number > -1 ? ("/" + team_number) : ""),
 				null);
@@ -28,7 +32,7 @@ class Room extends Tmup4J {
 		
 		param.add("users", users);
 		
-		return rest.request(RequestMethod.POST,
+		return request.request(RequestMethod.POST,
 				ContentType.appliaction_json,
 				EDGE_DOMAIN + "/v3/room/" + team_number,
 				param.toString()).get("room").getAsLong();

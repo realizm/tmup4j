@@ -12,7 +12,7 @@ enum ContentType {
 		this.value = value;
 	}
 
-	public String getType() {
+	String getType() {
 		return value;
 	}
 

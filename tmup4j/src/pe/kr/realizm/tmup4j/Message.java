@@ -6,10 +6,14 @@ import com.google.gson.JsonObject;
 
 class Message extends Tmup4J {
 
+	Message(Request request) {
+		super(request);
+	}
+
 	@Override
 	public long sendMessage(int team_number, int user_number, String content) throws IOException {
 		
-		long roomNumber = new Room().getRoomNumber(team_number, user_number);
+		long roomNumber = new Room(request).getRoomNumber(team_number, user_number);
 		JsonObject param = new JsonObject();
 		param.addProperty("content", content);
 		
@@ -20,7 +24,7 @@ class Message extends Tmup4J {
 	@Override
 	public long sendMessage(long room_number, JsonObject param) throws IOException {
 		
-		JsonObject result = rest.request(RequestMethod.POST,
+		JsonObject result = request.request(RequestMethod.POST,
 				ContentType.appliaction_json, 
 				EDGE_DOMAIN + "/v3/message/" + room_number,
 				param.toString());

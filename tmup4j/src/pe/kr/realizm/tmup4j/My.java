@@ -6,9 +6,13 @@ import com.google.gson.JsonObject;
 
 class My extends Tmup4J {
 	
+	My(Request request) {
+		super(request);
+	}
+
 	@Override
 	public JsonObject getMyInfo() throws IOException {
-		return rest.request(RequestMethod.GET,
+		return request.request(RequestMethod.GET,
 				ContentType.application_xwwwformurlencoded,
 				AUTH_DOMAIN + "/v1/user",
 				null);
