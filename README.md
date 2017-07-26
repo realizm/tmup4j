@@ -16,7 +16,7 @@ Team-up에서 Feed올리기 및 Chat발송을 편하게 하기 위해 만들어�
 - [com.google.gson](https://github.com/google/gson) Json Parameter 생성 및 Response 파싱. 
 
 
-## License info
+## License
 Tmup4J는 [Apache 2.0 License](https://github.com/realizm/tmup4j/blob/master/LICENSE)에 따라 사용하실 수 있습니다.
 
 
