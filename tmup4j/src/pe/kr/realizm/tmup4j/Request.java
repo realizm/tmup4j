@@ -18,6 +18,10 @@ class Request {
 	private String ACCESS_TOKEN = null;
 	private String REFRESH_TOKEN = null;
 	
+	boolean isAuth() {
+		return this.ACCESS_TOKEN != null;
+	}
+	
 	void clearToken() {
 		this.ACCESS_TOKEN = null;
 		this.REFRESH_TOKEN = null;

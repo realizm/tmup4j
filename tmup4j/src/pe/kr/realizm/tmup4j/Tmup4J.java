@@ -7,9 +7,9 @@ import com.google.gson.JsonObject;
 
 public class Tmup4J {
 
-	String AUTH_DOMAIN = "https://auth.tmup.com";
-	String EDGE_DOMAIN = "https://edge.tmup.com";
-	String FILE_DOMAIN = "https://file.tmup.com";
+	static String AUTH_DOMAIN = "https://auth.tmup.com";
+	static String EDGE_DOMAIN = "https://edge.tmup.com";
+	static String FILE_DOMAIN = "https://file.tmup.com";
 
 	private OAuth2 oAuth2;
 
@@ -22,7 +22,7 @@ public class Tmup4J {
 	/**
 	 * Tmup4J (https://github.com/realizm/tmup4j)
 	 * 
-	 * @version : 0.1.0 alpha
+	 * @version : 0.1.2 alpha
 	 * @author : Kim taejung (realizmk at gmail.com)
 	 * @param client_id
 	 * @param client_secret
@@ -126,16 +126,17 @@ public class Tmup4J {
 
 	/**
 	 * <h1>feed - 피드 생성</h1>
-	 * 
+	 *  
 	 * @param feedgroup_number
 	 * @param content
-	 * @return feed_number
+	 * @param markup_content
 	 * @param force_alert
+	 * @return
 	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, boolean force_alert)
+	public long postFeed(long feedgroup_number, String content, boolean markup_content, boolean force_alert)
 			throws IOException {
-		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, -1, new File[0], force_alert);
+		return new Feed(request).postFeed(feedgroup_number, content, markup_content, -1, new File[0], force_alert);
 	}
 
 	/**
@@ -143,16 +144,17 @@ public class Tmup4J {
 	 * 
 	 * @param feedgroup_number
 	 * @param content
+	 * @param markup_content
 	 * @param team_number
 	 * @param attach_file
 	 * @param force_alert
-	 * @return feed_number
+	 * @return
 	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number,
+	public long postFeed(long feedgroup_number, String content, boolean markup_content, int team_number,
 			File attach_file, boolean force_alert) throws IOException {
 		File[] attach_files = { attach_file };
-		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, team_number, attach_files,
+		return new Feed(request).postFeed(feedgroup_number, content, markup_content, team_number, attach_files,
 				force_alert);
 	}
 
@@ -161,15 +163,16 @@ public class Tmup4J {
 	 * 
 	 * @param feedgroup_number
 	 * @param content
+	 * @param markup_content
 	 * @param team_number
 	 * @param attach_files
 	 * @param force_alert
-	 * @return feed_number
+	 * @return
 	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number,
+	public long postFeed(long feedgroup_number, String content, boolean markup_content, int team_number,
 			File[] attach_files, boolean force_alert) throws IOException {
-		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, team_number, attach_files,
+		return new Feed(request).postFeed(feedgroup_number, content, markup_content, team_number, attach_files,
 				force_alert);
 	}
 
@@ -179,12 +182,13 @@ public class Tmup4J {
 	 * @see also http://team-up.github.io/v3/edge/feed/#api-feed-postFeed
 	 * 
 	 * @param feedgroup_number
+	 * @param markup_content
 	 * @param param
 	 * @return
 	 * @throws IOException
 	 */
-	public long postFeed(long feedgroup_number, boolean isMarkupContent, JsonObject param) throws IOException {
-		return new Feed(request).postFeed(feedgroup_number, isMarkupContent, param);
+	public long postFeed(long feedgroup_number, boolean markup_content, JsonObject param) throws IOException {
+		return new Feed(request).postFeed(feedgroup_number, markup_content, param);
 	}
 
 	/**
@@ -252,18 +256,45 @@ public class Tmup4J {
 	public long sendMessage(long room_number, JsonObject param) throws IOException {
 		return new Message(request).sendMessage(room_number, param);
 	}
-
+	
+	/**
+	 * <h1>Auth를 획득했는지 여부를 반환한다.</h1>
+	 * 
+	 * @return
+	 */
+	public boolean isAuth() {
+		return request.isAuth();
+	}
+	
+	/**
+	 * <h1>https://auth.tmup.com 의 대체 도메인을 셋한다.</h1>
+	 * 일반적으로는 사용할 필요 없다.
+	 * 
+	 * @param auth_domain
+	 */
 	public void setAuthDomain(String auth_domain) {
-		this.AUTH_DOMAIN = auth_domain;
+		Tmup4J.AUTH_DOMAIN = auth_domain;
 		oAuth2.setAuthDomain(auth_domain);
 	}
 
+	/**
+	 * <h1>https://edge.tmup.com 의 대체 도메인을 셋한다.</h1>
+	 * 일반적으로는 사용할 필요 없다.
+	 * 
+	 * @param edge_domain
+	 */
 	public void setEdgeDomain(String edge_domain) {
-		this.EDGE_DOMAIN = edge_domain;
+		Tmup4J.EDGE_DOMAIN = edge_domain;
 	}
-
+	
+	/**
+	 * <h1>https://file.tmup.com 의 대체 도메인을 셋한다.</h1>
+	 * 일반적으로는 사용할 필요 없다.
+	 * 
+	 * @param file_domain
+	 */
 	public void setFileDomain(String file_domain) {
-		this.FILE_DOMAIN = file_domain;
+		Tmup4J.FILE_DOMAIN = file_domain;
 	}
 
 }
