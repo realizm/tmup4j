@@ -1,28 +1,25 @@
-#Tmup4J 이스트소프트의 Team-up API에 대응하는 JAVA 라이브러리입니다. 
+# Tmup4J 이스트소프트의 Team-up API에 대응하는 JAVA 라이브러리입니다. 
 
 
-##Goal
-
+## Goal
 Team-up에서 Feed올리기 및 Chat발송을 편하게 하기 위해 만들어졌습니다. 
 
 
-##Version history
-
+## Version history
 - v0.1.0a 초기 릴리즈
 - v0.1.1a 변수들에 static제거 및 생성자 수정, postFeed함수에 markup_content파리미터 추가
 - v0.1.2a domain관련 변수에 static 재생성, Auth상태인지를 반환하는 isAuth함수 추가, License 생성
 
 
-##Library dependency
-
+## Library dependency
 [com.google.gson](https://github.com/google/gson) 
 
-##License info
 
+## License info
 [Tmup4J는 Apache 2.0 License에 따라 사용하실 수 있습니다.](https://github.com/realizm/tmup4j/blob/master/LICENSE)
 
 
-##Sample code
+## Sample code
 
 	public static void main(String[] args) throws Exception {
 		
