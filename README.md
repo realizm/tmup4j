@@ -1,11 +1,26 @@
-Tmup4J �̽�Ʈ����Ʈ�� Team-up API�� �����ϴ� ���̺귯���Դϴ�. 
-
-Tmup4J is a EstSoft Team-up API binding library for the Java language licensed under Apache License 2.0.
-
-Tmup4J includes software from gson.google.com to parse JSON request/response from the Team-up API. You can see the license term at https://github.com/google/gson/blob/master/LICENSE
+# Tmup4J 
+이스트소프트의 Team-up API에 대응하는 JAVA 라이브러리입니다. 
 
 
+## Goal
+Team-up에서 Feed올리기 및 Chat발송을 편하게 하기 위해 만들어졌습니다. 
 
+
+## Version history
+- v0.1.0a 초기 릴리즈
+- v0.1.1a 변수들에 static제거 및 생성자 수정, postFeed함수에 markup_content파리미터 추가
+- v0.1.2a domain관련 변수에 static 재생성, Auth상태인지를 반환하는 isAuth함수 추가, License 생성
+
+
+## Library dependency
+- [com.google.gson](https://github.com/google/gson) Json Parameter 생성 및 Response 파싱. 
+
+
+## License
+Tmup4J는 [Apache 2.0 License](https://github.com/realizm/tmup4j/blob/master/LICENSE)에 따라 사용하실 수 있습니다.
+
+
+## Sample code
 
 	public static void main(String[] args) throws Exception {
 		
@@ -14,33 +29,33 @@ Tmup4J includes software from gson.google.com to parse JSON request/response fro
 		tmup4J.oAuth2("USER@EMAIL","PASSWORD");
 		
 		
-		//�������� ���ؿ´�
+		//내정보를 구해온다
 		JsonObject myInfo = tmup4J.getMyInfo();
 		
-		//����ȣ ȹ��
+		//팀번호 획득
 		JsonArray teamInfos = myInfo.get("teams").getAsJsonArray();
 		int teamIdx = teamInfos.get(0).getAsJsonObject().get("index").getAsInt();
 		
 		
-		/*feed�߼�*/
+		/*feed발송*/
 		
-		//feed�˻�
-		long feedGroupNumber = tmup4J.getFeedGroupNumber(teamIdx, "�׽�Ʈ�ǵ�");
+		//feed검색
+		long feedGroupNumber = tmup4J.getFeedGroupNumber(teamIdx, "테스트피드");
 		
-		//feed�߼�
-		String feedContent = "<h1>�ǵ� ������</h1>";
+		//feed발송
+		String feedContent = "<h1>피드 컨텐츠</h1>";
 		File[] attachFiles = {new File("AnyOne"), new File("AnotherOne")};
 		tmup4J.postFeed(feedGroupNumber, feedContent, true, teamIdx, attachFiles, false);
 		
 		
 		//chat
-		//user�˻�
+		//user검색
 		JsonObject searchResult = tmup4J.searchOrganization(teamIdx, "RECIEVER@EMAIL");
 		JsonArray users = searchResult.get("users").getAsJsonArray();
 		int userIdx = users.get(0).getAsJsonObject().get("index").getAsInt();
 		
-		//chat�߼�
-		tmup4J.sendMessage(teamIdx, userIdx, "�޽���");
+		//chat발송
+		tmup4J.sendMessage(teamIdx, userIdx, "메시지");
 		
 		
 	}
