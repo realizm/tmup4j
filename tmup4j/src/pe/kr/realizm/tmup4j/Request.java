@@ -63,7 +63,7 @@ class Request {
 
 			if (params != null && params.length() > 0 && requestMethod == RequestMethod.POST) {
 				conn.setDoOutput(true);
-				writer = new OutputStreamWriter(conn.getOutputStream());
+				writer = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
 
 				writer.write(params);
 				writer.flush();
