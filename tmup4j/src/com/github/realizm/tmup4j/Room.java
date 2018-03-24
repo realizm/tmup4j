@@ -1,6 +1,7 @@
 package com.github.realizm.tmup4j;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -37,8 +38,22 @@ class Room extends Tmup4J {
 				EDGE_DOMAIN + "/v3/room/" + team_number,
 				param.toString()).get("room").getAsLong();
 	}
-
+	
+	private static HashMap<Integer, HashMap<Integer, Long>> STORED_ROOM_NUMBER 
+			= new HashMap<Integer, HashMap<Integer, Long>>();
+	
 	protected long getRoomNumber(int team_number, int user_number) throws IOException {
+		
+		HashMap<Integer, Long> storedRoomNumberMap;
+		if(STORED_ROOM_NUMBER.containsKey(team_number)) {
+			storedRoomNumberMap = STORED_ROOM_NUMBER.get(team_number);
+			if(storedRoomNumberMap.containsKey(user_number)) {
+				return storedRoomNumberMap.get(user_number);
+			}
+		} else {
+			storedRoomNumberMap = new HashMap<Integer, Long>();
+			STORED_ROOM_NUMBER.put(team_number, storedRoomNumberMap);
+		}
 		
 		JsonObject roomList = getRoomList(team_number); 
 		JsonArray roomListArray = roomList.get("rooms").getAsJsonArray();
@@ -56,6 +71,8 @@ class Room extends Tmup4J {
 			int[] user_numbers = {user_number};
 			roomNumber = createRoom(team_number, user_numbers);
 		}
+		
+		storedRoomNumberMap.put(user_number, roomNumber);
 		
 		return roomNumber;
 	}
