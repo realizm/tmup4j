@@ -63,7 +63,7 @@ class Request {
 
 			if (params != null && params.length() > 0 && requestMethod == RequestMethod.POST) {
 				conn.setDoOutput(true);
-				writer = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+				writer = new OutputStreamWriter(conn.getOutputStream(), "utf-8");
 
 				writer.write(params);
 				writer.flush();
@@ -75,9 +75,9 @@ class Request {
 			System.out.println("===================================================================");
 
 			if (responseCode < 400) {
-				isr = new InputStreamReader(conn.getInputStream());
+				isr = new InputStreamReader(conn.getInputStream(), "utf-8");
 			} else {
-				isr = new InputStreamReader(conn.getErrorStream());
+				isr = new InputStreamReader(conn.getErrorStream(), "utf-8");
 			}
 
 			reader = new BufferedReader(isr);
@@ -146,10 +146,13 @@ class Request {
 			dos = new DataOutputStream(conn.getOutputStream());
 
 			for (File file : files) {
-				dos.writeBytes("--" + boundary + "\r\n");
-				dos.writeBytes("Content-Disposition: form-data; name=\"files[]\";" + " filename=\"" + file.getName()
-						+ "\"" + "\r\n");
-				dos.writeBytes("\r\n");
+				
+				String boudaryString = "--" + boundary + "\r\n"
+						+"Content-Disposition: form-data; name=\"files[]\";" + " filename=\"" + file.getName() + "\"\r\n"
+						+ "\r\n";
+				byte[] boundaryBytes = boudaryString.getBytes("utf-8");
+				dos.write(boundaryBytes);
+				
 				fis = new FileInputStream(file);
 				bytesAvailable = fis.available();
 				bufferSize = Math.min(bytesAvailable, maxBufferSize);
@@ -171,9 +174,9 @@ class Request {
 			System.out.println("file upload Response Code : " + responseCode);
 			System.out.println("============================================");
 			if (responseCode == 200) {
-				isr = new InputStreamReader(conn.getInputStream());
+				isr = new InputStreamReader(conn.getInputStream(), "utf-8");
 			} else {
-				isr = new InputStreamReader(conn.getErrorStream());
+				isr = new InputStreamReader(conn.getErrorStream(), "utf-8");
 			}
 
 			reader = new BufferedReader(isr);
