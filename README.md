@@ -7,10 +7,21 @@ Team-up에서 Feed올리기 및 Chat발송을 편하게 하기 위해 만들어�
 
 
 ## Version history
-- v0.1.0a 초기 릴리즈
-- v0.1.1a 변수들에 static제거 및 생성자 수정, postFeed함수에 markup_content파리미터 추가
-- v0.1.2a domain관련 변수에 static 재생성, Auth상태인지를 반환하는 isAuth함수 추가, License 생성
-- v0.1.3a REST API호출시 캐릭터셋 UTF-8 고정
+* v0.2.0
+	+ com.github.realizm.tmup4j로 패키지명 변경
+	+ 토큰 리프레시 및 리프레시 토큰 만료시 재 로그인 기능 추가
+	+ 한글깨짐 현상 추가수정
+	+ 방번호 찾는 로직에 캐싱 로직 추가
+* v0.1.3a
+	+ REST API호출시 캐릭터셋 UTF-8 고정
+* v0.1.2a
+	+ domain관련 변수에 static 재생성
+	+ Auth상태인지를 반환하는 isAuth함수 추가, License 생성
+* v0.1.1a 
+	+ 변수들에 static제거 및 생성자 수정
+	+ postFeed함수에 markup_content파리미터 추가
+* v0.1.0a 
+	+ 초기 릴리즈
 
 ## Library dependency
 - [com.google.gson](https://github.com/google/gson) Json Parameter 생성 및 Response 파싱. 
