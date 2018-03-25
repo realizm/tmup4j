@@ -52,13 +52,13 @@ public class Tmup4J {
 	 * 
 	 * @see also http://team-up.github.io/oauth2/#api-oauth2-postOauth2TokenCode2
 	 * 
-	 * @param code
+	 * @param authorizationCode
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws IOException
 	 */
-	public JsonObject oAuth2(String code) throws IllegalAccessException, IOException {
-		return oAuth2.oAuth2(code);
+	public JsonObject oAuth2(String authorizationCode) throws IllegalAccessException, IOException {
+		return oAuth2.oAuth2(authorizationCode);
 	}
 
 	/**
@@ -70,6 +70,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getMyInfo() throws IOException {
+		checkAuthExpiration();
 		return new My(request).getMyInfo();
 	}
 
@@ -84,6 +85,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject searchOrganization(int team_number, String query) throws IOException {
+		checkAuthExpiration();
 		return new Team(request).searchOrganization(team_number, query);
 	}
 
@@ -96,6 +98,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getFeedGroupList() throws IOException {
+		checkAuthExpiration();
 		return new Feed(request).getFeedGroupList(-1);
 	}
 
@@ -109,6 +112,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getFeedGroupList(int team_number) throws IOException {
+		checkAuthExpiration();
 		return new Feed(request).getFeedGroupList(team_number);
 	}
 
@@ -121,6 +125,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long getFeedGroupNumber(int team_number, String feed_name) throws IOException {
+		checkAuthExpiration();
 		return new Feed(request).getFeedGroupNumber(team_number, feed_name);
 	}
 
@@ -136,6 +141,7 @@ public class Tmup4J {
 	 */
 	public long postFeed(long feedgroup_number, String content, boolean markup_content, boolean force_alert)
 			throws IOException {
+		checkAuthExpiration();
 		return new Feed(request).postFeed(feedgroup_number, content, markup_content, -1, new File[0], force_alert);
 	}
 
@@ -153,6 +159,7 @@ public class Tmup4J {
 	 */
 	public long postFeed(long feedgroup_number, String content, boolean markup_content, int team_number,
 			File attach_file, boolean force_alert) throws IOException {
+		checkAuthExpiration();
 		File[] attach_files = { attach_file };
 		return new Feed(request).postFeed(feedgroup_number, content, markup_content, team_number, attach_files,
 				force_alert);
@@ -172,6 +179,7 @@ public class Tmup4J {
 	 */
 	public long postFeed(long feedgroup_number, String content, boolean markup_content, int team_number,
 			File[] attach_files, boolean force_alert) throws IOException {
+		checkAuthExpiration();
 		return new Feed(request).postFeed(feedgroup_number, content, markup_content, team_number, attach_files,
 				force_alert);
 	}
@@ -188,6 +196,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long postFeed(long feedgroup_number, boolean markup_content, JsonObject param) throws IOException {
+		checkAuthExpiration();
 		return new Feed(request).postFeed(feedgroup_number, markup_content, param);
 	}
 
@@ -200,6 +209,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getRoomList() throws IOException {
+		checkAuthExpiration();
 		return new Room(request).getRoomList(-1);
 	}
 
@@ -213,6 +223,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public JsonObject getRoomList(int team_number) throws IOException {
+		checkAuthExpiration();
 		return new Room(request).getRoomList(team_number);
 	}
 
@@ -227,6 +238,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long createRoom(int team_number, int[] user_numbers) throws IOException {
+		checkAuthExpiration();
 		return new Room(request).createRoom(team_number, user_numbers);
 	}
 
@@ -240,6 +252,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long sendMessage(int team_number, int user_number, String content) throws IOException {
+		checkAuthExpiration();
 		return new Message(request).sendMessage(team_number, user_number, content);
 	}
 
@@ -254,6 +267,7 @@ public class Tmup4J {
 	 * @throws IOException
 	 */
 	public long sendMessage(long room_number, JsonObject param) throws IOException {
+		checkAuthExpiration();
 		return new Message(request).sendMessage(room_number, param);
 	}
 	
@@ -296,5 +310,10 @@ public class Tmup4J {
 	public void setFileDomain(String file_domain) {
 		Tmup4J.FILE_DOMAIN = file_domain;
 	}
-
+	
+	private void checkAuthExpiration() throws IOException {
+		if(request.isExpired()) {
+			oAuth2.refreshToken();
+		}
+	}
 }

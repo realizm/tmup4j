@@ -17,19 +17,34 @@ class Request {
 	
 	private String ACCESS_TOKEN = null;
 	private String REFRESH_TOKEN = null;
+	private long ON_EXPIRATION = 0;
 	
 	boolean isAuth() {
 		return this.ACCESS_TOKEN != null;
 	}
 	
+	boolean isExpired() throws IOException {
+		if( isAuth() ) {
+			return ON_EXPIRATION < System.currentTimeMillis();
+		} else {
+			throw new IOException("Not logged in.");			
+		}
+	}
+		
 	void clearToken() {
 		this.ACCESS_TOKEN = null;
 		this.REFRESH_TOKEN = null;
+		this.ON_EXPIRATION = 0;
 	}
 	
-	void setToken(String tokenType, String accessToken, String refreshToken) {
+	void setToken(String tokenType, String accessToken, String refreshToken, long onExpiration) {
 		this.ACCESS_TOKEN = tokenType + " " + accessToken;
-		this.REFRESH_TOKEN = tokenType + " " + refreshToken;
+		this.REFRESH_TOKEN = refreshToken;
+		this.ON_EXPIRATION = onExpiration;
+	}
+	
+	String getRefreshToken() {
+		return this.REFRESH_TOKEN;
 	}
 	
 	JsonObject request(RequestMethod requestMethod, ContentType contentType, final String apiPath, String params)
