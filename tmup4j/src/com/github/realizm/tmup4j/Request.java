@@ -130,6 +130,13 @@ class Request {
 
 	}
 
+	JsonObject uploadFile(final String apiPath, File file) throws IOException {
+		
+		File[] files = {file};
+		
+		return uploadFiles(apiPath, files);
+	}
+	
 	JsonObject uploadFiles(final String apiPath, File[] files) throws IOException {
 
 		final String boundary = "---------------------------tmup4J" + System.currentTimeMillis();

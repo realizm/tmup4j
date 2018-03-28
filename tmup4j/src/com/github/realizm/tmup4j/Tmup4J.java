@@ -255,6 +255,20 @@ public class Tmup4J {
 		checkAuthExpiration();
 		return new Message(request).sendMessage(team_number, user_number, content);
 	}
+	
+	/**
+	 * <h1>message - 메시지 생성(파일)</h1>
+	 * 
+	 * @param team_number
+	 * @param user_number
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public long sendMessage(int team_number, int user_number, File file) throws IOException {
+		checkAuthExpiration();
+		return new Message(request).sendMessage(team_number, user_number, file);
+	}
 
 	/**
 	 * <h1>message - 메시지 생성</h1>
@@ -269,6 +283,21 @@ public class Tmup4J {
 	public long sendMessage(long room_number, JsonObject param) throws IOException {
 		checkAuthExpiration();
 		return new Message(request).sendMessage(room_number, param);
+	}
+	
+	/**
+	 * <h1>message - 메시지 생성</h1>
+	 * 
+	 * @see also http://team-up.github.io/v3/edge/chat/#api-message-postMessage
+	 * 
+	 * @param room_number
+	 * @param param
+	 * @return
+	 * @throws IOException
+	 */
+	public long sendMessage(long room_number, int type, JsonObject param) throws IOException {
+		checkAuthExpiration();
+		return new Message(request).sendMessage(room_number, type, param);
 	}
 	
 	/**
