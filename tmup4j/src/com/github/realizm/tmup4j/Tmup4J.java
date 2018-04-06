@@ -240,7 +240,19 @@ public class Tmup4J {
 		checkAuthExpiration();
 		return new Feed(request).postFeed(feedgroup_number, markup_content, param);
 	}
-
+	
+	/**
+	 * <h1>room - 사용자 번호로 방번호를 구하는 간편메소드</h1>
+	 * @param team_number
+	 * @param user_number
+	 * @return
+	 * @throws IOException
+	 */
+	public long getRoomNumber(int team_number, int user_number) throws IOException {
+		checkAuthExpiration();
+		return new Room(request).getRoomNumber(team_number, user_number);
+	}
+	
 	/**
 	 * <h1>room - 대화방 목록</h1>
 	 * 

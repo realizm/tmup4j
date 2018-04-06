@@ -45,7 +45,8 @@ class Room extends Tmup4J {
 	private static HashMap<Integer, HashMap<Integer, Long>> STORED_ROOM_NUMBER 
 			= new HashMap<Integer, HashMap<Integer, Long>>();
 	
-	protected long getRoomNumber(int team_number, int user_number) throws IOException {
+	@Override
+	public long getRoomNumber(int team_number, int user_number) throws IOException {
 		
 		if(MY_USER_NUMBER == -1){
 			MY_USER_NUMBER = new My(request).getMyInfo().get("index").getAsInt();
