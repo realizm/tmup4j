@@ -9,9 +9,11 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 class Request {
 	
@@ -129,20 +131,61 @@ class Request {
 		}
 
 	}
-
-	JsonObject uploadFile(final String apiPath, File file) throws IOException {
-		
-		File[] files = {file};
-		
-		return uploadFiles(apiPath, files);
+	
+	JsonObject uploadFile(int team_number, File file) throws IOException {
+		return uploadFiles(team_number, new File[]{file});
 	}
 	
-	JsonObject uploadFiles(final String apiPath, File[] files) throws IOException {
+	JsonObject uploadFile(int team_number, InputStream input_stream, String file_name) throws IOException {
+		return uploadFiles(team_number, new InputStream[] {input_stream}, new String[] {file_name});
+	}
+	
+	JsonObject uploadFiles(int team_number, File[] files) throws IOException {
+		FileInputStream[] fisArray = new FileInputStream[files.length];
+		String[] fileNames = new String[files.length];
+		
+		for(int i = 0; i < files.length; i++) {
+			fisArray[i] = new FileInputStream(files[i]);
+			fileNames[i] = files[i].getName();
+		}
+		
+		JsonObject result = null;
+		try {
+			result = uploadFiles(team_number, fisArray, fileNames);
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			for(FileInputStream fis:fisArray) {
+				if(fis != null)
+					try {
+						fis.close();
+					} catch (IOException ex) {
+					}
+			}
+		}
 
+		return result;
+	}
+	
+	private final Pattern REGEXP_ILLEGAL_FILENAME = Pattern.compile("[:\\\\/%*?:|\"<>]");
+	JsonObject uploadFiles(int team_number, InputStream[] input_streams, String[] file_names) throws IOException {
+		
+		if(input_streams.length != file_names.length)
+			throw new IOException("InputStream and File name length is not match.");
+		
+		for(int i = 0 ; i < file_names.length; i++) {
+			String fileName = file_names[i];
+			if(fileName == null || fileName.trim().isEmpty())
+				throw new IOException("Empty file name.");
+			
+			file_names[i] = REGEXP_ILLEGAL_FILENAME.matcher(fileName).replaceAll("_");
+		}
+		
+		final String apiPath = Tmup4J.FILE_DOMAIN + "/v3/files/" + team_number;
+		
 		final String boundary = "---------------------------tmup4J" + System.currentTimeMillis();
 		HttpsURLConnection conn = null;
 		DataOutputStream dos = null;
-		FileInputStream fis = null;
 
 		int bytesRead, bytesAvailable, bufferSize;
 		byte[] buffer;
@@ -166,25 +209,28 @@ class Request {
 			conn.setRequestProperty("Cache-Control", "no-cache");
 
 			dos = new DataOutputStream(conn.getOutputStream());
-
-			for (File file : files) {
+			
+			String boudaryFormat = "--" + boundary + "\r\n"
+					+"Content-Disposition: form-data; name=\"files[]\";" + " filename=\"%s\"\r\n"
+					+ "\r\n";
+			
+			InputStream inputStream = null;
+			
+			for(int i = 0; i < input_streams.length; i++) {
 				
-				String boudaryString = "--" + boundary + "\r\n"
-						+"Content-Disposition: form-data; name=\"files[]\";" + " filename=\"" + file.getName() + "\"\r\n"
-						+ "\r\n";
-				byte[] boundaryBytes = boudaryString.getBytes("utf-8");
+				inputStream = input_streams[i];
+				byte[] boundaryBytes = String.format(boudaryFormat, file_names[i]).getBytes("utf-8");
 				dos.write(boundaryBytes);
 				
-				fis = new FileInputStream(file);
-				bytesAvailable = fis.available();
+				bytesAvailable = inputStream.available();
 				bufferSize = Math.min(bytesAvailable, maxBufferSize);
 				buffer = new byte[bufferSize];
-				bytesRead = fis.read(buffer, 0, bufferSize);
+				bytesRead = inputStream.read(buffer, 0, bufferSize);
 				while (bytesRead > 0) {
 					dos.write(buffer, 0, bufferSize);
-					bytesAvailable = fis.available();
+					bytesAvailable = inputStream.available();
 					bufferSize = Math.min(bytesAvailable, maxBufferSize);
-					bytesRead = fis.read(buffer, 0, bufferSize);
+					bytesRead = inputStream.read(buffer, 0, bufferSize);
 				}
 				dos.writeBytes("\r\n");
 			}
@@ -216,18 +262,11 @@ class Request {
 		} catch (IOException e) {
 			throw e;
 		} finally {
-
 			if (dos != null)
 				try {
 					dos.close();
 				} catch (IOException e) {
 				}
-			if (fis != null)
-				try {
-					fis.close();
-				} catch (IOException e) {
-				}
-
 			if (reader != null) {
 				try {
 					reader.close();
@@ -243,7 +282,4 @@ class Request {
 			conn.disconnect();
 		}
 	}
-
-	
-
 }
