@@ -2,6 +2,7 @@ package com.github.realizm.tmup4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.google.gson.JsonObject;
 
@@ -183,6 +184,46 @@ public class Tmup4J {
 		return new Feed(request).postFeed(feedgroup_number, content, markup_content, team_number, attach_files,
 				force_alert);
 	}
+	
+	/**
+	 * <h1>feed - 피드 생성 (파일-스트림 첨부)</h1>
+	 * 
+	 * @param feedgroup_number
+	 * @param content
+	 * @param isMarkupContent
+	 * @param team_number
+	 * @param input_stream
+	 * @param file_name
+	 * @param force_alert
+	 * @return
+	 * @throws IOException
+	 */
+	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number,
+			InputStream input_stream, String file_name, boolean force_alert) throws IOException {
+		
+		checkAuthExpiration();
+		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, team_number,
+				new InputStream[] { input_stream }, new String[] { file_name }, force_alert);
+	}
+	
+	/**
+	 * <h1>feed - 피드 생성 (다중 파일-스트림 첨부)</h1>
+	 * 
+	 * @param feedgroup_number
+	 * @param content
+	 * @param isMarkupContent
+	 * @param team_number
+	 * @param input_streams
+	 * @param file_names
+	 * @param force_alert
+	 * @return
+	 * @throws IOException
+	 */
+	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number,
+			InputStream[] input_streams, String[] file_names, boolean force_alert) throws IOException {
+		checkAuthExpiration();
+		return new Feed(request).postFeed(feedgroup_number, content, isMarkupContent, team_number, input_streams, file_names, force_alert);
+	}
 
 	/**
 	 * <h1>feed - 피드 생성</h1>
@@ -226,7 +267,7 @@ public class Tmup4J {
 		checkAuthExpiration();
 		return new Room(request).getRoomList(team_number);
 	}
-
+	
 	/**
 	 * <h1>room - 대화방생성</h1>
 	 * 
@@ -269,6 +310,20 @@ public class Tmup4J {
 		checkAuthExpiration();
 		return new Message(request).sendMessage(team_number, user_number, file);
 	}
+	
+	/**
+	 * <h1>message - 메시지 생성(파일-스트림)</h1>
+	 * 
+	 * @param team_number
+	 * @param user_number
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public long sendMessage(int team_number, int user_number, InputStream input_stream, String file_name) throws IOException {
+		checkAuthExpiration();
+		return new Message(request).sendMessage(team_number, user_number, input_stream, file_name);
+	}
 
 	/**
 	 * <h1>message - 메시지 생성</h1>
@@ -300,6 +355,69 @@ public class Tmup4J {
 		return new Message(request).sendMessage(room_number, type, param);
 	}
 	
+	/**
+	 * <h1>file - 파일 업로드</h1> 
+	 * 
+	 * @see also http://team-up.github.io/v3/file/#api-upload-postFiles
+	 * 
+	 * @param team_number
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public JsonObject uploadFile(int team_number, File file) throws IOException{
+		checkAuthExpiration();
+		return request.uploadFile(team_number, file);
+	}
+	
+	/**
+	 * <h1>file - 파일 업로드</h1> 
+	 * 
+	 * @see also http://team-up.github.io/v3/file/#api-upload-postFiles
+	 * 
+	 * @param team_number
+	 * @param input_stream
+	 * @param file_name
+	 * @return
+	 * @throws IOException
+	 */
+	public JsonObject uploadFile(int team_number, InputStream input_stream, String file_name) throws IOException {
+		checkAuthExpiration();
+		return request.uploadFile(team_number, input_stream, file_name);
+	}
+	
+	/**
+	 * <h1>file - 파일 업로드</h1> 
+	 * 
+	 * @see also http://team-up.github.io/v3/file/#api-upload-postFiles
+	 * 
+	 * @param team_number
+	 * @param files
+	 * @return
+	 * @throws IOException
+	 */
+	public JsonObject uploadFiles(int team_number, File[] files) throws IOException{
+		checkAuthExpiration();
+		return request.uploadFiles(team_number, files);
+	}
+	
+	/**
+	 * <h1>file - 파일 업로드</h1> 
+	 * 
+	 * @see also http://team-up.github.io/v3/file/#api-upload-postFiles
+	 * 
+	 * @param team_number
+	 * @param input_streams
+	 * @param file_names
+	 * @return
+	 * @throws IOException
+	 */
+	public JsonObject uploadFiles(int team_number, InputStream[] input_streams, String[] file_names)
+			throws IOException {
+		checkAuthExpiration();
+		return request.uploadFiles(team_number, input_streams, file_names);
+	}
+
 	/**
 	 * <h1>Auth를 획득했는지 여부를 반환한다.</h1>
 	 * 

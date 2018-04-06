@@ -2,6 +2,7 @@ package com.github.realizm.tmup4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -59,7 +60,7 @@ class Feed extends Tmup4J {
 
 		if (files != null && files.length > 0) {
 
-			JsonObject uploadResult = request.uploadFiles(FILE_DOMAIN + "/v3/files/" + team_number, files);
+			JsonObject uploadResult = request.uploadFiles(team_number, files);
 			JsonArray uploadResultArray = uploadResult.get("files").getAsJsonArray();
 
 			JsonArray ids = new JsonArray();
@@ -70,6 +71,28 @@ class Feed extends Tmup4J {
 
 			param.add("ids", ids);
 		}
+
+		return postFeed(feedgroup_number, isMarkupContent, param);
+	}
+	
+	@Override
+	public long postFeed(long feedgroup_number, String content, boolean isMarkupContent, int team_number,
+			InputStream[] input_streams, String[] file_names, boolean force_alert) throws IOException {
+
+		JsonObject param = new JsonObject();
+		param.addProperty("content", content);
+		param.addProperty("push", force_alert ? "1" : "0");
+
+		JsonObject uploadResult = request.uploadFiles(team_number, input_streams, file_names);
+		JsonArray uploadResultArray = uploadResult.get("files").getAsJsonArray();
+	
+		JsonArray ids = new JsonArray();
+		for (JsonElement je : uploadResultArray) {
+			String uploadID = je.getAsJsonObject().get("id").getAsString();
+			ids.add(uploadID);
+		}
+	
+		param.add("ids", ids);
 
 		return postFeed(feedgroup_number, isMarkupContent, param);
 	}
