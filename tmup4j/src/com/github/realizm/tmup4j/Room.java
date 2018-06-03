@@ -40,9 +40,9 @@ class Room extends Tmup4J {
 	}
 	
 	
-	private static int MY_USER_NUMBER = -1;
+	private int MY_USER_NUMBER = -1;
 	
-	private static HashMap<Integer, HashMap<Integer, Long>> STORED_ROOM_NUMBER 
+	private HashMap<Integer, HashMap<Integer, Long>> STORED_ROOM_NUMBER 
 			= new HashMap<Integer, HashMap<Integer, Long>>();
 	
 	@Override
