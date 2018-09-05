@@ -4,6 +4,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import com.google.gson.JsonObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.regex.Pattern;
 
 class Request {
@@ -187,10 +189,9 @@ class Request {
 		HttpsURLConnection conn = null;
 		DataOutputStream dos = null;
 
-		int bytesRead, bytesAvailable, bufferSize;
-		byte[] buffer;
-		int maxBufferSize = 1 * 1024 * 1024;
-
+		
+		int bufferSize = 8 * 1024;
+		byte[] buffer = new byte[bufferSize];
 		// Response
 		InputStreamReader isr = null;
 		BufferedReader reader = null;
@@ -211,27 +212,24 @@ class Request {
 			dos = new DataOutputStream(conn.getOutputStream());
 			
 			String boudaryFormat = "--" + boundary + "\r\n"
-					+"Content-Disposition: form-data; name=\"files[]\";" + " filename=\"%s\"\r\n"
+					+ "Content-Disposition: form-data; name=\"files[]\";" + " filename=\"%s\"\r\n"
+					+ "Content-Type: %s\r\n"
 					+ "\r\n";
 			
 			InputStream inputStream = null;
 			
 			for(int i = 0; i < input_streams.length; i++) {
 				
-				inputStream = input_streams[i];
-				byte[] boundaryBytes = String.format(boudaryFormat, file_names[i]).getBytes("utf-8");
-				dos.write(boundaryBytes);
+				inputStream = new BufferedInputStream(input_streams[i], bufferSize); 
 				
-				bytesAvailable = inputStream.available();
-				bufferSize = Math.min(bytesAvailable, maxBufferSize);
-				buffer = new byte[bufferSize];
-				bytesRead = inputStream.read(buffer, 0, bufferSize);
-				while (bytesRead > 0) {
-					dos.write(buffer, 0, bufferSize);
-					bytesAvailable = inputStream.available();
-					bufferSize = Math.min(bytesAvailable, maxBufferSize);
-					bytesRead = inputStream.read(buffer, 0, bufferSize);
-				}
+				dos.write(String.format(boudaryFormat, file_names[i], URLConnection.guessContentTypeFromStream(inputStream)).getBytes("utf-8"));
+				
+		        int bytesRead = inputStream.read(buffer);
+		        while (bytesRead != -1) {
+		            dos.write(buffer, 0, bytesRead);
+		            bytesRead = inputStream.read(buffer);
+		        }
+				
 				dos.writeBytes("\r\n");
 			}
 			
