@@ -470,6 +470,14 @@ public class Tmup4J {
 		Tmup4J.FILE_DOMAIN = file_domain;
 	}
 	
+	public void setConnectTimeout(int ms) {
+		request.setConnectTimeout(ms);
+	}
+	
+	public void setReadTimeout(int ms){
+		request.setReadTimeout(ms);
+	}
+	
 	private void checkAuthExpiration() throws IOException {
 		if(request.isExpired()) {
 			oAuth2.refreshToken();

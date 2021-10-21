@@ -23,6 +23,17 @@ class Request {
 	private String REFRESH_TOKEN = null;
 	private long ON_EXPIRATION = 0;
 	
+	private int connectTimeout = 2000;
+	private int readTimeout = 5000;
+	
+	void setConnectTimeout(int ms){
+		this.connectTimeout = ms;
+	}
+	
+	void setReadTimeout(int ms){
+		this.readTimeout = ms;
+	}
+	
 	boolean isAuth() {
 		return this.ACCESS_TOKEN != null;
 	}
@@ -71,6 +82,10 @@ class Request {
 		try {
 			final URL url = new URL(requestUrl);
 			conn = (HttpsURLConnection) url.openConnection();
+			
+			conn.setConnectTimeout(connectTimeout);
+			conn.setReadTimeout(readTimeout);
+			
 			conn.setRequestMethod(requestMethod.toString());
 
 			conn.setRequestProperty("Content-Type", contentType.getType());
@@ -200,6 +215,10 @@ class Request {
 		try {
 			URL url = new URL(apiPath);
 			conn = (HttpsURLConnection) url.openConnection();
+			
+			conn.setConnectTimeout(connectTimeout);
+			conn.setReadTimeout(readTimeout);
+			
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
 			conn.setUseCaches(false);
