@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tmup4j</groupId>
 	<artifactId>tmup4j</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.3</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
