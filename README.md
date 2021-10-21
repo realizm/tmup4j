@@ -7,6 +7,12 @@ Team-up에서 Feed올리기 및 Chat발송을 편하게 하기 위해 만들어�
 
 
 ## Version history
+* v0.2.3
+	+ connect timeout수정 (default 2000msec)
+	+ read timeout수정 (default 5000msec)
+	+ setConnectTimeout (int ms) 메소드 추가
+	+ setReadTimeout (int ms) 메소드 추가
+	+ Build Encoding 'utf-8'로 
 * v0.2.2
 	+ 파일전송 기능 추가
 	+ 내부 메소드로 사용하던 getRoomNumber 메소드 외부로 노출
