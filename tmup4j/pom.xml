@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>tmup4j</groupId>
   <artifactId>tmup4j</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.3</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -24,4 +24,8 @@
   		<version>2.8.2</version>
   	</dependency>
   </dependencies>
+  <properties>
+  	<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+  	<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
+  </properties>
 </project>
