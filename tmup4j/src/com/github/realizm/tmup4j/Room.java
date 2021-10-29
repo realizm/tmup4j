@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 class Room extends Tmup4J {
@@ -67,23 +66,9 @@ class Room extends Tmup4J {
 			STORED_ROOM_NUMBER.put(team_number, storedRoomNumberMap);
 		}
 		
-		JsonObject roomList = getRoomList(team_number); 
-		JsonArray roomListArray = roomList.get("rooms").getAsJsonArray();
-		
-		long roomNumber = -1;
-		for(JsonElement je:roomListArray) {
-			JsonObject roomInfo = je.getAsJsonObject();
-			
-			if (roomInfo.get("user").getAsInt() == user_number && roomInfo.get("users").getAsJsonArray().size() == 1) {
-				roomNumber = roomInfo.get("room").getAsLong();
-			}
-		}
-		
-		if(roomNumber == -1) {
-			int[] user_numbers = {user_number};
-			roomNumber = createRoom(team_number, user_numbers);
-		}
-		
+		//teamup에서 1:1대화방이 있을경우 createRoom을 하더라도 기존방번호를 반환한다.
+		int[] user_numbers = {user_number};
+		long roomNumber = createRoom(team_number, user_numbers);
 		storedRoomNumberMap.put(user_number, roomNumber);
 		
 		return roomNumber;
