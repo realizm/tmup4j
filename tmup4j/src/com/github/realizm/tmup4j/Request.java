@@ -23,8 +23,19 @@ class Request {
 	private String REFRESH_TOKEN = null;
 	private long ON_EXPIRATION = 0;
 	
+	private String userAgent = null;
+	
 	private int connectTimeout = 2000;
 	private int readTimeout = 5000;
+	
+	Request(){
+		String title = getClass().getPackage().getImplementationTitle();
+		String version = getClass().getPackage().getImplementationVersion();
+		String javaVersion = System.getProperty("java.version");
+		String osName = System.getProperty("os.name");
+		
+		this.userAgent = String.format("%s/%s (Java/%s; %s)", title, version, javaVersion, osName);
+	}
 	
 	void setConnectTimeout(int ms){
 		this.connectTimeout = ms;
@@ -88,9 +99,10 @@ class Request {
 			
 			conn.setRequestMethod(requestMethod.toString());
 
+			conn.setRequestProperty("User-Agent", userAgent);
 			conn.setRequestProperty("Content-Type", contentType.getType());
 			conn.setRequestProperty("charset", "utf-8");
-
+			
 			if (ACCESS_TOKEN != null) {
 				conn.setRequestProperty("Authorization", ACCESS_TOKEN);
 			}
@@ -104,10 +116,7 @@ class Request {
 			}
 
 			final int responseCode = conn.getResponseCode();
-			System.out.println(String.format("Sending '%s' request to URL : %s", requestMethod, requestUrl));
-			System.out.println("Response Code : " + responseCode);
-			System.out.println("===================================================================");
-
+			
 			if (responseCode < 400) {
 				isr = new InputStreamReader(conn.getInputStream(), "utf-8");
 			} else {
@@ -223,11 +232,12 @@ class Request {
 			conn.setDoOutput(true);
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
+			conn.setRequestProperty("User-Agent", userAgent);
 			conn.setRequestProperty("Connection", "Keep-Alive");
 			conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 			conn.setRequestProperty("Authorization", ACCESS_TOKEN);
 			conn.setRequestProperty("Cache-Control", "no-cache");
-
+			
 			dos = new DataOutputStream(conn.getOutputStream());
 			
 			String boudaryFormat = "--" + boundary + "\r\n"
@@ -256,8 +266,6 @@ class Request {
 			dos.flush();
 
 			final int responseCode = conn.getResponseCode();
-			System.out.println("file upload Response Code : " + responseCode);
-			System.out.println("============================================");
 			if (responseCode == 200) {
 				isr = new InputStreamReader(conn.getInputStream(), "utf-8");
 			} else {
