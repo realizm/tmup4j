@@ -7,6 +7,9 @@ Team-up에서 Feed올리기 및 Chat발송을 편하게 하기 위해 만들어�
 
 
 ## Version history
+* v0.2.4
+	+ getRoomNumber 메소드 최적화
+	+ user-agent 추가
 * v0.2.3
 	+ connect timeout수정 (default 2000msec)
 	+ read timeout수정 (default 5000msec)
